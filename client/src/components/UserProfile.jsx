@@ -26,7 +26,7 @@ function UserProfile({ user }) {
             size="lg"
             onClick={async () => {
               const { gameId } = await API.startNewGame(user.id);
-              navigate(`/${user.id}/game/${gameId}`);
+                navigate(`/${user.id}/game/${gameId}`);
             }}
             disabled={!user}
           >
