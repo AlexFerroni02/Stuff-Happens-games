@@ -108,10 +108,11 @@ export const saveInitialRounds = (gameId, cardIds) => {
 // Crea un nuovo round "in_progress"
 export const createNewRound = (gameId, cardId) => {
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO rounds (gameID, roundNumber, cardId, status) VALUES (?, NULL, ?, 'in_progress')`;
-    db.run(sql, [gameId, cardId], function (err) {
+    const startedAt = dayjs().format('YYYY-MM-DD HH:mm:ss'); // Timestamp di inizio round
+    const sql = `INSERT INTO rounds (gameID, roundNumber, cardId, status, startedAt) VALUES (?, NULL, ?, 'in_progress', ?)`;
+    db.run(sql, [gameId, cardId, startedAt], function (err) {
       if (err) return reject(err);
-      resolve(this.lastID); // id del nuovo round
+      resolve({ roundId: this.lastID, startedAt }); // Restituisce anche startedAt
     });
   });
 };
@@ -170,6 +171,31 @@ export const getRandomCardExcluding = (excludedIds) => {
     db.get(sql, excludedIds, (err, row) => {
       if (err) return reject(err);
       resolve(row);
+    });
+  });
+};
+
+
+// DELETE FOR DEMO GAME
+export const deleteGameAndRounds = (gameId) => {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('DELETE FROM rounds WHERE gameID = ?', [gameId], function(err) {
+        if (err) {
+          console.error(`DAO: Error deleting rounds for gameId ${gameId}:`, err);
+          return reject(err);
+        }
+        console.log(`DAO: Deleted rounds for gameId ${gameId}. Changes: ${this.changes}`);
+        
+        db.run('DELETE FROM games WHERE id = ?', [gameId], function(err) {
+          if (err) {
+            console.error(`DAO: Error deleting game for gameId ${gameId}:`, err);
+            return reject(err);
+          }
+          console.log(`DAO: Deleted game for gameId ${gameId}. Changes: ${this.changes}`);
+          resolve();
+        });
+      });
     });
   });
 };

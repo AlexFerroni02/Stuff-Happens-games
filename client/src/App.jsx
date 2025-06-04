@@ -7,8 +7,12 @@ import { Routes, Route, Navigate,useNavigate } from "react-router";
 import { LoginForm } from "./components/AuthComponents";
 import DefaultLayout from "./components/DefaultLayout";
 import  HomePage from "./components/HomePage";
+import DemoPage from "./components/DemoPage";
 import UserProfile from "./components/UserProfile";
 import GamePage from "./components/GamePage";
+import GameEndPage from "./components/GameEndPage";
+import RoundPage from "./components/RoundPage";
+import RoundEndPage from "./components/RoundEndPage";
 import NotFound from "./components/NotFound";
 import API from "./API/API.mjs";
 function App() {
@@ -55,8 +59,13 @@ function App() {
         
         
       </Route>
+      <Route path="/demo" element={<DemoPage />} />
       <Route path="/:userId/game/:gameId" element={loggedIn ? <GamePage user={user} /> : <Navigate to="/" />} />
+      <Route path="/:userId/game/:gameId/end" element={loggedIn ? <GameEndPage user={user} /> : <Navigate to="/" />} />
+      <Route path="/:userId/game/:gameId/round/:roundId" element={loggedIn ? <RoundPage user={user} /> : <Navigate to="/" />}/>
+      <Route path="/:userId/game/:gameId/round/:roundId/end" element={loggedIn ? <RoundEndPage /> : <Navigate to="/" />} />
       <Route path="*" element={ <NotFound /> } />
+
     </Routes>
   )
 }
