@@ -4,11 +4,11 @@ import API from "../API/API.mjs";
 import { Card, Button, Row, Col } from "react-bootstrap";
 import HandCards from "./HandCards";
 function GamePage({ user }) {
-  const { userId, gameId } = useParams();
-  const location = useLocation();
+  const {  gameId } = useParams();
+  
   const navigate = useNavigate();
 
-  // Prendi le carte iniziali da location.state, oppure stato vuoto
+  
   const [ownedCards, setOwnedCards] = useState([]);
   useEffect(() => {
     const fetchInitialCards = async () => {
@@ -27,7 +27,7 @@ function GamePage({ user }) {
     
     const response = await API.startNewRound(gameId);
    
-    navigate(`/${userId}/game/${gameId}/round/${response.roundId}`);
+    navigate(`/game/${gameId}/round/${response.roundId}`);
   } catch (err) {
     alert("Unable to start new round: " + err.message);
   }

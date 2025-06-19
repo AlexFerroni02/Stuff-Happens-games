@@ -23,7 +23,7 @@ function App() {
   const navigate = useNavigate();
   useEffect(() => {
   const checkAuth = async () => {
-    const user = await API.getUserInfo(); // we have the user info here
+    const user = await API.getUserInfo(); 
     setLoggedIn(true);
     setUser(user);
   };
@@ -39,6 +39,7 @@ function App() {
   } catch(err) {
     
     setMessage({msg: err.message ? err.message : String(err), type: 'danger'});
+    throw err; 
   }
 };
 
@@ -54,16 +55,16 @@ function App() {
     <Routes>
       <Route element={ <DefaultLayout loggedIn={loggedIn} handleLogout={handleLogout} message={message} setMessage={setMessage} /> } >
         <Route path="/" element={ <HomePage loggedIn={loggedIn} /> } />
-        <Route path='/login' element={loggedIn ? <Navigate replace to={`/${user.id}`}/> : <LoginForm handleLogin={handleLogin} />} />
-        <Route path="/:userId" element={loggedIn ? <UserProfile user={user} /> : <Navigate to="/" />} />
+        <Route path='/login' element={loggedIn ? <Navigate replace to={`/profile`}/> : <LoginForm handleLogin={handleLogin} />} />
+        <Route path="/profile" element={loggedIn ? <UserProfile user={user} /> : <Navigate to="/" />} />
         
         
       </Route>
       <Route path="/demo" element={<DemoPage />} />
-      <Route path="/:userId/game/:gameId" element={loggedIn ? <GamePage user={user} /> : <Navigate to="/" />} />
-      <Route path="/:userId/game/:gameId/end" element={loggedIn ? <GameEndPage user={user} /> : <Navigate to="/" />} />
-      <Route path="/:userId/game/:gameId/round/:roundId" element={loggedIn ? <RoundPage user={user} /> : <Navigate to="/" />}/>
-      <Route path="/:userId/game/:gameId/round/:roundId/end" element={loggedIn ? <RoundEndPage /> : <Navigate to="/" />} />
+      <Route path="/game/:gameId" element={loggedIn ? <GamePage user={user} /> : <Navigate to="/" />} />
+      <Route path="/game/:gameId/end" element={loggedIn ? <GameEndPage user={user} /> : <Navigate to="/" />} />
+      <Route path="/game/:gameId/round/:roundId" element={loggedIn ? <RoundPage user={user} /> : <Navigate to="/" />}/>
+      <Route path="/game/:gameId/round/:roundId/end" element={loggedIn ? <RoundEndPage user={user} /> : <Navigate to="/" />} />
       <Route path="*" element={ <NotFound /> } />
 
     </Routes>

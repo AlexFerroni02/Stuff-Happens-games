@@ -37,7 +37,7 @@ function DemoPage() {
       try {
         await API.deleteDemoGame(gameId);
       } catch (delErr) {
-        // ignore
+        
       }
     }
     setGameId(null);
@@ -58,7 +58,7 @@ function DemoPage() {
       setError(err.message || "Failed to start demo.");
     }
   };
-
+  
   const handleGuess = async () => {
     if (selectedPosition === null || !gameId || !roundId) return;
     try {

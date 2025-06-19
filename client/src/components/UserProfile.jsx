@@ -14,8 +14,7 @@ function UserProfile({ user }) {
       .then(setGamesList)
       .catch(() => setGamesList([]));
   }
-}, [user,gamesList.length]); // da vedere se da problemi con il ciclo infinito o funziona bene
-
+}, [user,gamesList.length]);
   return (
     <Container className="mt-4">
       <Row className="justify-content-center mb-4">
@@ -25,8 +24,8 @@ function UserProfile({ user }) {
             variant="primary"
             size="lg"
             onClick={async () => {
-              const { gameId } = await API.startNewGame(user.id);
-                navigate(`/${user.id}/game/${gameId}`);
+              const { gameId } = await API.startNewGame();
+                navigate(`/game/${gameId}`);
             }}
             disabled={!user}
           >

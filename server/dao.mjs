@@ -1,6 +1,6 @@
 import sqlite from 'sqlite3';
 import crypto from 'crypto';
-import { Game, Round } from './GAMEModels.mjs';
+import { Game,Round} from './GAMEModels.mjs';
 import dayjs from 'dayjs';
 
 // Open a database connection
@@ -46,7 +46,7 @@ export const listGames = (userId) => {
       if (err)
         reject(err);
       else {
-        const games = rows.map((g) => new Game(g.id, g.userId, g.status, g.date, g.totalCards, g.totalMistakes, g.currentRound));
+        const games = rows.map((g) => new Game(g.id, g.userId, g.status, g.date, g.totalCards, g.totalMistakes));
         resolve(games);
       }
     });
@@ -152,7 +152,7 @@ export const getCardById = (cardId) => {
 };
 
 
-export const getRandomInitialCards = (userId) => {
+export const getRandomInitialCards = () => {
   return new Promise((resolve, reject) => {
     // Prendi 3 carte random dal DB
     db.all('SELECT * FROM cards ORDER BY RANDOM() LIMIT 3', [], (err, rows) => {

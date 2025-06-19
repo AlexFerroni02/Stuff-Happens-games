@@ -4,16 +4,16 @@ import API from "../API/API.mjs";
 import { Alert, Button } from "react-bootstrap";
 import HandCards from "./HandCards";
 
-function RoundEndPage() {
-  const { userId, gameId } = useParams();
+function RoundEndPage(user) {
+  const { gameId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [gameState, setGameState] = useState(null);
 
-  // Carica lo stato aggiornato della partita
+  
   useEffect(() => {
     const fetchState = async () => {
-      // con ? evitiamo errori se state e undefined
+      // con ? evitiamo errori se state è undefined
       const lastResult = location.state?.roundResult;
       if (lastResult) {
         setGameState(lastResult);
@@ -25,7 +25,7 @@ function RoundEndPage() {
   }, [location.state]);
   useEffect(() => {
   if (gameState && (gameState.status === "win" || gameState.status === "lose")) {
-    navigate(`/${userId}/game/${gameId}/end`);
+    navigate(`/game/${gameId}/end`);
   }
 }, [gameState]);
 
@@ -33,7 +33,7 @@ function RoundEndPage() {
 
   const { ownedCards, mistakes, status, lastGuessCorrect,timeout } = gameState;
 
-  // Messaggio di esito
+  
 let resultMsg = "";
 let resultVariant = "info";
 if (status === "win") {
@@ -53,18 +53,18 @@ if (status === "win") {
   resultVariant = "danger";
 }
 
-  // Gestione "Next round"
+ 
   const handleNextRound = async () => {
     try {
       const response = await API.startNewRound(gameId);
       if (response.roundId) {
-        navigate(`/${userId}/game/${gameId}/round/${response.roundId}`);
+        navigate(`/game/${gameId}/round/${response.roundId}`);
       } else {
-        // Se non ci sono più round, torna al profilo o pagina game over
-         navigate(`/${userId}/game/${gameId}/end`)
+        
+         navigate(`/game/${gameId}/end`)
       }
     } catch (err) {
-      navigate(`/${userId}`);
+      navigate(`/profile`);
     }
   };
 

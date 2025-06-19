@@ -4,18 +4,15 @@ import API from "../API/API.mjs";
 import { Alert, Button } from "react-bootstrap";
 import HandCards from "./HandCards";
 
-function GameEndPage() {
-  const { userId, gameId } = useParams();
+function GameEndPage(user) {
+  const {  gameId } = useParams();
   const navigate = useNavigate();
   const [gameState, setGameState] = useState(null);
 
   useEffect(() => {
     const fetchGameState = async () => {
       try {
-        // Puoi riutilizzare getRoundState con un roundId fittizio o creare una API apposita per lo stato finale
-        // Qui assumiamo che l'ultimo stato round abbia tutte le info (ownedCards, status, ecc.)
-        // Se serve, crea una API tipo /api/game/:gameId/state per avere lo stato finale
-        const response = await API.getRoundState(gameId, -1); // -1 o null se vuoi una API diversa
+        const response = await API.getRoundState(gameId, -1); 
         setGameState(response);
       } catch (err) {
         setGameState({ error: "Failed to load game state" });
@@ -37,12 +34,12 @@ function GameEndPage() {
       <h2>Your final cards</h2>
       <HandCards cards={ownedCards} />
       <div className="mt-4 d-flex justify-content-center gap-3">
-        <Button variant="primary" onClick={() => navigate(`/${userId}`)}>
+        <Button variant="primary" onClick={() => navigate(`/profile`)}>
           Back to Profile
         </Button>
         <Button variant="success" onClick={async () => {
-          const { gameId: newGameId, initialCards } = await API.startNewGame(userId);
-          navigate(`/${userId}/game/${newGameId}`, { state: { initialCards } });
+          const { gameId: newGameId, initialCards } = await API.startNewGame(user.id);
+          navigate(`/game/${newGameId}`, { state: { initialCards } });
         }}>
           Start New Game
         </Button>

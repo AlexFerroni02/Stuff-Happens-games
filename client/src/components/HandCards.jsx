@@ -9,7 +9,7 @@ function HandCards({ cards }) {
             <Card.Img variant="top" src={`http://localhost:3001${card.image}`} />
             <Card.Body>
               <Card.Title>{card.name}</Card.Title>
-              <Card.Text>Luck Index: {card.index}</Card.Text>
+              <Card.Text>Unluck Index: {card.index}</Card.Text>
             </Card.Body>
           </Card>
         </Col>

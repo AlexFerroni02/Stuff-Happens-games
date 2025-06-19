@@ -4,8 +4,8 @@ import API from "../API/API.mjs";
 import { Card, Row, Col, Alert, Button } from "react-bootstrap";
 import HandCards from "./HandCards";
 
-function RoundPage() {
-  const { userId,gameId, roundId } = useParams();
+function RoundPage(user) {
+  const { gameId, roundId } = useParams();
   const navigate = useNavigate();
   const [gameState, setGameState] = useState();
   const [selectedPosition, setSelectedPosition] = useState();
@@ -22,9 +22,9 @@ function RoundPage() {
 
   useEffect(() => {
   if (secondsLeft === 0 && gameState?.currentRound) {
-      // Chiama la funzione di timeout
+      
       API.timeoutRound(gameId, roundId).then((result) => {
-        navigate(`/${userId}/game/${gameId}/round/${roundId}/end`, { state: { roundResult: result } });
+        navigate(`/game/${gameId}/round/${roundId}/end`, { state: { roundResult: result } });
       });
     }
   }, [secondsLeft]);
@@ -38,7 +38,7 @@ function RoundPage() {
 
   useEffect(() => {
     getRoundState();
-    // eslint-disable-next-line
+   
   }, [gameId, roundId]);
 
   if (!gameState) return <div>Loading...</div>;
@@ -48,7 +48,7 @@ function RoundPage() {
   const handleConfirmGuess = async () => {
     try {
       const result = await API.guessRound(gameId, roundId, selectedPosition);
-      navigate(`/${userId}/game/${gameId}/round/${roundId}/end`, { state: { roundResult: result } });
+      navigate(`/game/${gameId}/round/${roundId}/end`, { state: { roundResult: result } });
       
     } catch (err) {
       setRoundResult("Error submitting your answer");
@@ -56,11 +56,11 @@ function RoundPage() {
   };
   
 
-  // --- Main render ---
+
   return (
     <Row className="justify-content-center mt-5">
         <Col xs={12} md={8}>
-        {/* Errors on top */}
+       
         <ErrorsAlert mistakes={mistakes} />
         
         <div className="mb-3">
@@ -69,13 +69,10 @@ function RoundPage() {
         </Alert>
       </div>
         
-
-        {/* Cards in hand always visible */}
         <h2>Your cards in hand ({ownedCards.length})</h2>
         <HandCards cards={ownedCards} />
         <hr />
 
-        {/* Show card to place and position selector ONLY if round is active and NOT answered yet */}
         {currentRound && !roundResult && (
             <>
             <h3>Card to place:</h3>
@@ -100,7 +97,6 @@ function RoundPage() {
     );
 }
 
-// --- UI helper functions ---
   function ErrorsAlert({ mistakes }) {
     return (
       <Alert variant={mistakes > 0 ? "danger" : "info"}>
@@ -108,8 +104,6 @@ function RoundPage() {
       </Alert>
     );
   }
-
-  
 
 function PositionSelector({ ownedCards, selectedPosition, setSelectedPosition }) {
   return (
@@ -139,8 +133,6 @@ function PositionSelector({ ownedCards, selectedPosition, setSelectedPosition })
     </Row>
   );
 }
-
-
 
 function CardToPlace({ card }) {
   return (

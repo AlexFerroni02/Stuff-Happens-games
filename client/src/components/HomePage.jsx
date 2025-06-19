@@ -8,15 +8,17 @@ function HomePage() {
       <Col xs={12} md={8} lg={6}>
         <Card className="shadow">
           <Card.Body>
-            <Card.Title as="h1" className="mb-3">Luckless Life</Card.Title>
+            <Card.Title as="h1" className="mb-3">Stuff Happens</Card.Title>
             <Card.Subtitle as="h4" className="mb-4 text-muted">How to Play</Card.Subtitle>
             <Card.Text>
-              1. You start with 3 random misfortune cards.<br />
-              2. Each round, guess where a new misfortune fits among your cards.<br />
-              3. If you guess right, you win the card. If not, you lose the round.<br />
-              4. Win by collecting 6 cards, lose after 3 mistakes.<br /><br />
-              <b>Log in</b> to play a full game and track your history!<br />
-              <b>Try Demo</b> to play a single round without registration.
+              1. You start with 3 random misfortune cards, each with a name, image, and a unique misfortune index (from 1 to 100).<br />
+              2. In each round, you are shown a new misfortune (not already in your hand) with its name and image, but not its index.<br />
+              3. Place the new card where you think its misfortune index fits among your current cards (which are always shown in order).<br />
+              4. If you guess the correct position within 30 seconds, you win the card and see all its details.<br />
+              5. If you guess wrong or run out of time, you do not win the card and it will not appear again in this game.<br />
+              6. Win the game by collecting 6 cards. Lose if you make 3 mistakes.<br /><br />
+              <b>Registered users:</b> can play full games and view their match history.<br />
+              <b>Visitors:</b> can try a one-round demo game.<br />
             </Card.Text>
             
           </Card.Body>

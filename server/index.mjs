@@ -7,7 +7,7 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import session from 'express-session';
 import { body, validationResult } from 'express-validator';
-import { Game, Round } from './GAMEModels.mjs';
+import { Game } from './GAMEModels.mjs';
 import { getUser, listGames, listRoundsOfGame, getCardById,createNewGame, saveInitialRounds,getRandomInitialCards,getRandomCardExcluding, createNewRound,updateRoundStatus, updateGameEndStatus,deleteGameAndRounds } from './dao.mjs'; // Assuming you have a function to get user from your database
 // init express
 const app = express();
@@ -107,11 +107,11 @@ app.get('/api/history/games', isLoggedIn, async (req, res) => {
 //----------------DEMO MANAGEMENT-----------------//
 const DEMO_USER_ID = 0; // User ID speciale per le partite demo
 
-// POST /api/demo/start - Inizia una nuova partita demo
+
 app.post('/api/demo/start', async (req, res) => {
   try {
-    const gameId = await createNewGame(DEMO_USER_ID); // Crea partita con userId 0
-    const initialCardsData = await getRandomInitialCards(); // Non serve userId qui se è generico
+    const gameId = await createNewGame(DEMO_USER_ID); 
+    const initialCardsData = await getRandomInitialCards(); 
     await saveInitialRounds(gameId, initialCardsData.map(c => c.id));
     
     // Subito dopo, crea il primo (e unico) round per la demo
@@ -120,7 +120,7 @@ app.post('/api/demo/start', async (req, res) => {
     const newCard = await getRandomCardExcluding(usedCardIds);
 
     if (!newCard) {
-      await deleteGameAndRounds(gameId); // Pulisci se non possiamo procedere
+      await deleteGameAndRounds(gameId); 
       return res.status(500).json({ error: "No cards available to start demo round." });
     }
     
@@ -135,51 +135,14 @@ app.post('/api/demo/start', async (req, res) => {
         name: newCard.name,
         image: newCard.image
         
-      },
-      startedAt
+      }
     });
   } catch (err) {
     console.error("Error starting demo game:", err);
     res.status(500).json({ error: 'Failed to start demo game' });
   }
 });
-/*
-app.get('/api/demo/game/:gameId/round/:roundId/state', async (req, res) => {
-  try {
-    const { gameId, roundId } = req.params;
-    const rounds = await listRoundsOfGame(gameId);
 
-    const ownedCards = [];
-    for (const round of rounds) {
-      if (round.status === 'initial' || round.status === 'won') { // 'won' non dovrebbe accadere in una demo di 1 round
-        const card = await getCardById(round.cardId);
-        if (card) ownedCards.push(card);
-      }
-    }
-    ownedCards.sort((a, b) => a.index - b.index);
-
-    const currentRoundInfo = rounds.find(r => r.id == roundId);
-    if (!currentRoundInfo || currentRoundInfo.status !== 'in_progress') {
-      return res.status(404).json({ error: "Demo round not found or already completed." });
-    }
-    const cardToGuess = await getCardById(currentRoundInfo.cardId);
-
-    res.json({
-      ownedCards,
-      cardToGuess: {
-        id: cardToGuess.id,
-        name: cardToGuess.name,
-        image: cardToGuess.image
-      
-      },
-      startedAt: currentRoundInfo.startedAt, // Assicurati che startedAt sia nel modello Round e nel DB
-      status: 'in_progress' // La demo è sempre in_progress fino al guess
-    });
-  } catch (err) {
-    console.error("Error fetching demo round state:", err);
-    res.status(500).json({ error: 'Failed to load demo round state' });
-  }
-});*/
 app.post('/api/demo/game/:gameId/round/:roundId/guess', [
   body('position').isInt({ min: 0 }),
 ], async (req, res) => {
@@ -192,7 +155,7 @@ app.post('/api/demo/game/:gameId/round/:roundId/guess', [
   const { position } = req.body;
 
   try {
-    const rounds = await listRoundsOfGame(gameId); // Prende tutti i round della partita demo
+    const rounds = await listRoundsOfGame(gameId); 
     const currentRoundInfo = rounds.find(r => r.id == roundId && r.status === 'in_progress');
 
     if (!currentRoundInfo) {
@@ -236,7 +199,7 @@ app.post('/api/demo/game/:gameId/round/:roundId/guess', [
           index: cardToGuess.index
         };
       } else {
-        await updateRoundStatus(roundId, 'lost_demo', null); // Nuovo stato
+        await updateRoundStatus(roundId, 'lost_demo', null);
         guessResult.message = "Wrong! You would lose this demo round.";
       }
     }
@@ -272,7 +235,7 @@ app.post('/api/demo/game/:gameId/round/:roundId/timeout', async (req, res) => {
 app.delete('/api/demo/game/:gameId', async (req, res) => {
   try {
     const { gameId } = req.params;
-    await deleteGameAndRounds(gameId); // Funzione DAO da creare
+    await deleteGameAndRounds(gameId); 
     res.status(200).json({ message: "Demo game deleted successfully." });
   } catch (err) {
     console.error("Error deleting demo game:", err);
@@ -286,12 +249,12 @@ app.delete('/api/demo/game/:gameId', async (req, res) => {
 app.post('/api/game/start', isLoggedIn, async (req, res) => {
   try {
     const userId = req.user.id;
-    // 1. Crea la partita nel DB e ottieni gameId
+    
     const gameId = await createNewGame(userId); 
-    // 2. Estrai 3 carte random e salvale come round "initial"
-    const cards = await getRandomInitialCards(userId);
+    // genero le carte e poi le salvo nel DB
+    const cards = await getRandomInitialCards();
     await saveInitialRounds(gameId, cards.map(c => c.id));
-    // 3. Restituisci gameId
+    
     res.json({ gameId});
   } catch (err) {
     res.status(500).json({ error: 'Failed to start new game' });
@@ -316,28 +279,7 @@ app.get('/api/game/:gameId/initial-cards', isLoggedIn, async (req, res) => {
   }
 });
 
-app.get('/api/game/:gameId/state', isLoggedIn, async (req, res) => {
-  try {
-    const { gameId } = req.params;
-    const rounds = await listRoundsOfGame(gameId);
-    const ownedCards = [];
-    let mistakes = 0;
-    for (const round of rounds) {
-      if (round.status === 'initial' || round.status === 'won') {
-        const card = await getCardById(round.cardId);
-        if (card) ownedCards.push(card);
-      }
-      if (round.status === 'lost') mistakes++;
-    }
-    ownedCards.sort((a, b) => a.index - b.index);
-    let status = "in_progress";
-    if (ownedCards.length >= 6) status = "win";
-    if (mistakes >= 3) status = "lose";
-    res.json({ ownedCards, status, mistakes });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load game state' });
-  }
-});
+
 
 
 
@@ -345,18 +287,18 @@ app.get('/api/game/:gameId/state', isLoggedIn, async (req, res) => {
 app.post('/api/game/:gameId/round/new', isLoggedIn, async (req, res) => {
   try {
     const gameId = req.params.gameId;
-    // Recupera tutti i round della partita
+    
     const rounds = await listRoundsOfGame(gameId);
-    // Trova le carte già usate
+    
     const usedCardIds = rounds.map(r => r.cardId);
 
-    // Estrai una nuova carta non ancora usata
+    // prendi una carta che non sta tra quelle usate
     const newCard = await getRandomCardExcluding(usedCardIds);
     if (!newCard) {
-      // Se non ci sono più carte disponibili (o la tabella cards è vuota)
+      
       return res.status(400).json({ error: "No more cards available for this game or cards table is empty." });
     }
-    // Crea il nuovo round
+    
     const { roundId } = await createNewRound(gameId, newCard.id);
 
     res.json({ roundId });
@@ -438,7 +380,6 @@ app.post('/api/game/:gameId/round/:roundId/guess', isLoggedIn, [
 
     res.json({
       ownedCards: ownedCardsAfter,
-      currentRound: null, 
       mistakes: mistakesAfter,
       status: statusAfter,
       lastGuessCorrect,
@@ -481,7 +422,7 @@ app.get('/api/game/:gameId/round/:roundId/state', isLoggedIn, async (req, res) =
 
     res.json({
       ownedCards,
-      currentRound: currentCard ? { roundId, card: { id: currentCard.id, name: currentCard.name, image: currentCard.image }, startedAt } : null,
+      currentRound: currentCard ? { card: { id: currentCard.id, name: currentCard.name, image: currentCard.image } } : null,
       mistakes,
       status
     });
@@ -497,7 +438,7 @@ app.post('/api/game/:gameId/round/:roundId/timeout', isLoggedIn, async (req, res
   try {
     const rounds = await listRoundsOfGame(gameId);
 
-    // Aggiorna il round solo se è ancora in corso
+    
     const currentRoundInfo = rounds.find(r => r.id == roundId && r.status === 'in_progress');
     if (currentRoundInfo) {
       const roundNumberOfThisRound = rounds.filter(r => r.roundNumber !== null).length + 1;
@@ -525,7 +466,6 @@ app.post('/api/game/:gameId/round/:roundId/timeout', isLoggedIn, async (req, res
 
     res.json({
       ownedCards,
-      currentRound: null,
       mistakes,
       status,
       lastGuessCorrect: false,

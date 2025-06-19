@@ -10,7 +10,9 @@ function NavHeader(props) {
   return(
     <Navbar bg='primary' data-bs-theme='dark'>
       <Container fluid>
-      <Link to="/" className="navbar-brand">Stuff Happens</Link>
+      <Navbar.Brand className="text-white" style={{ cursor: "default" }}>
+        Stuff Happens
+      </Navbar.Brand>
       {props.loggedIn ? 
         <LogoutButton logout={props.handleLogout} /> :
         <Link to='/login'className='btn btn-outline-light'>Login</Link>
