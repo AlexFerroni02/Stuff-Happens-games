@@ -1,6 +1,63 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/uNTgnFHD)
-# Exam #N: "Stuff Happens"
-## Student: s338561 Ferroni Alex 
+# Stuff Happens - Web Game
+
+This project is a full-stack web application developed for the Web Applications course at Politecnico di Torino.
+
+**Stuff Happens** is a game where players must guess the correct position of a new "misfortune" card among those already in their hand, based on a hidden luck index. The application features user authentication, game history, and a demo mode for visitors.
+
+> **Built with: [React](https://react.dev/) (frontend), [Node.js](https://nodejs.org/) & [Express](https://expressjs.com/) (backend)**
+
+---
+
+## Main Features
+
+- **React** for the interactive Single Page Application (SPA) frontend
+- **Node.js** and **Express** for the RESTful API backend
+- **User authentication** with session management
+- **Game logic** with rounds, timer, and error handling
+- **Demo mode** accessible without registration
+- **Game history** and user profile for registered users
+
+---
+## How to Run the Project
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <cloned-repo-folder>
+   ```
+
+2. **Install dependencies for both client and server**
+   ```bash
+   cd client
+   npm install
+   cd ../server
+   npm install
+   cd ..
+   ```
+
+3. **Start the backend server**
+   ```bash
+   cd server
+   npm start
+   # or
+   node index.mjs
+   ```
+
+4. **Start the frontend React app**
+   ```bash
+   cd ../client
+   npm run dev
+   ```
+
+5. **Open your browser and go to**
+   ```
+   http://localhost:5173
+   ```
+
+> The backend server runs by default on port 3001 and the frontend on port 5173.  
+> Make sure both are running for the app to work correctly.
+
+Below you will find details about the application routes, API endpoints, database structure, and main components.
 
 ## React Client Application Routes
 
